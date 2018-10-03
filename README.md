@@ -38,9 +38,12 @@ Usage of tcpproxy:
   -ltls
     	tls/ssl between client and proxy
       
-  -rhots string
+  -rhost string
     	proxy remote address (default ":80")
       
   -rtls
     	tls/ssl between proxy and target
+
+  -log
+      log type (string, hex)
 ```
