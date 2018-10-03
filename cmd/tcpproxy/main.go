@@ -7,7 +7,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/kahlys/proxy"
+	"github.com/mbndr/proxy"
 )
 
 var (
@@ -17,6 +17,7 @@ var (
 	localCert  = flag.String("lcert", "", "proxy certificate x509 file for tls/ssl use")
 	localKey   = flag.String("lkey", "", "proxy key x509 file for tls/ssl use")
 	remoteTLS  = flag.Bool("rtls", false, "tls/ssl between proxy and target")
+	logType = flag.String("log", "", "log type (string, hex)")
 )
 
 func main() {
@@ -44,6 +45,16 @@ func main() {
 		p = proxy.NewServer(raddr, nil, &tls.Config{InsecureSkipVerify: true})
 	} else {
 		p = proxy.NewServer(raddr, nil, nil)
+	}
+
+	// set log type
+	switch *logType {
+	case "string":
+		p.LogType = proxy.LOG_STRING
+	case "hex":
+		p.LogType = proxy.LOG_HEX
+	default:
+		p.LogType = proxy.LOG_NONE
 	}
 
 	fmt.Println("Proxying from " + laddr.String() + " to " + p.Target.String())

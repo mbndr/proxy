@@ -9,6 +9,14 @@ import (
 	"time"
 )
 
+type LogType int
+
+const (
+	LOG_NONE LogType = iota
+	LOG_HEX
+	LOG_STRING
+)
+
 // Server is a TCP server that takes an incoming request and sends it to another
 // server, proxying the response back to the client.
 type Server struct {
@@ -30,6 +38,9 @@ type Server struct {
 	// both client and target. Also, if a pipe is closed, the proxy waits 'timeout'
 	// seconds before closing the other one. By default timeout is 60 seconds.
 	Timeout time.Duration
+
+	// LogType is the type of how the network traffic is logged
+	LogType LogType
 }
 
 // NewServer created a new proxy which sends all packet to target. The function dir
@@ -142,6 +153,20 @@ func (p *Server) handleConn(conn net.Conn) {
 			_, err = dst.Write(b)
 			if err != nil {
 				return
+			}
+
+			// log piped traffic
+			if p.LogType != LOG_NONE {
+				fmt.Printf("%s -> %s: ", src.RemoteAddr(), dst.RemoteAddr())
+
+				switch p.LogType {
+				case LOG_HEX:
+					fmt.Printf("% x", b)
+				case LOG_STRING:
+					fmt.Printf("%s", string(b))
+				}
+
+				fmt.Println()
 			}
 		}
 	}
