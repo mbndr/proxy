@@ -7,7 +7,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/mbndr/proxy"
+	"github.com/kahlys/proxy"
 )
 
 var (
